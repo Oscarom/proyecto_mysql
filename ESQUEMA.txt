@@ -1,0 +1,96 @@
+-- Schema universidad
+-- -----------------------------------------------------
+CREATE SCHEMA IF NOT EXISTS `universidad` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci ;
+USE `universidad` ;
+
+-- -----------------------------------------------------
+-- Table `universidad`.`estudiante`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `universidad`.`estudiante` (
+  `estudiante_id` INT NOT NULL AUTO_INCREMENT,
+  `estudiante_nombre` VARCHAR(50) NOT NULL,
+  `estudiante_apellido` VARCHAR(50) NOT NULL,
+  `estudiante_celular` INT(10) NULL DEFAULT NULL,
+  `estudiante_email` VARCHAR(50) NOT NULL,
+  PRIMARY KEY (`estudiante_id`))
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8mb4
+COLLATE = utf8mb4_0900_ai_ci;
+
+
+-- -----------------------------------------------------
+-- Table `universidad`.`profesores`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `universidad`.`profesores` (
+  `profesor_id` INT NOT NULL AUTO_INCREMENT,
+  `profesor_nombre` VARCHAR(50) NOT NULL,
+  `profesor_celular` INT NOT NULL,
+  `email_profesor` VARCHAR(50) NOT NULL,
+  PRIMARY KEY (`profesor_id`))
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8mb4
+COLLATE = utf8mb4_0900_ai_ci;
+
+
+-- -----------------------------------------------------
+-- Table `universidad`.`cursos`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `universidad`.`cursos` (
+  `curso_id` INT NOT NULL AUTO_INCREMENT,
+  `curso_nombre` VARCHAR(50) NULL DEFAULT NULL,
+  `curso_profesor_id` INT NOT NULL,
+  `curso_estudiante_id` INT NOT NULL,
+  INDEX `Pk` (`curso_id` ASC) VISIBLE,
+  PRIMARY KEY (`curso_id`),
+  INDEX `curso_profesor_id_idx` (`curso_profesor_id` ASC) VISIBLE,
+  INDEX `curso_estudiante_id_idx` (`curso_estudiante_id` ASC) VISIBLE,
+  CONSTRAINT `curso_profesor_id`
+    FOREIGN KEY (`curso_profesor_id`)
+    REFERENCES `universidad`.`profesores` (`profesor_id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `curso_estudiante_id`
+    FOREIGN KEY (`curso_estudiante_id`)
+    REFERENCES `universidad`.`estudiante` (`estudiante_id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8mb4
+COLLATE = utf8mb4_0900_ai_ci;
+
+
+-- -----------------------------------------------------
+-- Table `universidad`.`calificaciones`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `universidad`.`calificaciones` (
+  `calificacion_id` INT NOT NULL AUTO_INCREMENT,
+  `calificacion` INT(2) NOT NULL,
+  `calificaciones_curso_id` INT NOT NULL,
+  `calificacion_estudiante_id` INT(2) NOT NULL,
+  `calificacion_profesor_id` INT(2) NOT NULL,
+  PRIMARY KEY (`calificacion_id`),
+  INDEX `calificacion_estudiante_id_idx` (`calificacion_estudiante_id` ASC) VISIBLE,
+  INDEX `calificacion_profesor_id_idx` (`calificacion_profesor_id` ASC) VISIBLE,
+  CONSTRAINT `calificacion_curso_id`
+    FOREIGN KEY (`calificacion_id`)
+    REFERENCES `universidad`.`cursos` (`curso_id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `calificacion_estudiante_id`
+    FOREIGN KEY (`calificacion_estudiante_id`)
+    REFERENCES `universidad`.`estudiante` (`estudiante_id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `calificacion_profesor_id`
+    FOREIGN KEY (`calificacion_profesor_id`)
+    REFERENCES `universidad`.`profesores` (`profesor_id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8mb4
+COLLATE = utf8mb4_0900_ai_ci;
+
+
+SET SQL_MODE=@OLD_SQL_MODE;
+SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
+SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
